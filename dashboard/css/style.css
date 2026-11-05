@@ -1,0 +1,22 @@
+:root{--bg:#0f1a14;--panel:#17261d;--line:#243a2c;--txt:#e6f2ea;--mut:#8fae9a;--green:#4ade80;--amber:#fbbf24;--red:#f87171}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Roboto,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 28px;border-bottom:1px solid var(--line)}
+h1{margin:0;font-size:1.3rem} header span{color:var(--mut);font-size:.8rem}
+main{padding:24px 28px;max-width:1400px;margin:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.card small{color:var(--mut);display:block;font-size:.75rem}
+.card strong{font-size:1.9rem;color:var(--green)} .card.warn strong{color:var(--amber)} .card.danger strong{color:var(--red)}
+.card em{display:block;font-style:normal;color:var(--mut);font-size:.72rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:16px;margin-bottom:20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+.panel h2{margin:0 0 12px;font-size:1rem;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px 6px;font-size:.8rem;max-width:100%}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)} th{color:var(--mut);font-weight:500}
+.tag{padding:2px 8px;border-radius:99px;font-size:.7rem;font-weight:600}
+.critico{background:#7f1d1d;color:#fecaca}.medio{background:#78350f;color:#fde68a}.baixo{background:#14532d;color:#bbf7d0}
+button{background:transparent;border:1px solid var(--green);color:var(--green);border-radius:6px;cursor:pointer;font-size:.72rem;padding:3px 8px}
+button:hover{background:var(--green);color:#000}
+@media(max-width:520px){.grid{grid-template-columns:1fr}main{padding:14px}}
