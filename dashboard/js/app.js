@@ -34,29 +34,35 @@ async function carregarGraficos() {
     datasets: [{ data: reg.map(x => x.total), backgroundColor: PALETA }] } });
 }
 
-const tag = (n) => `<span class="tag ${n}">${n}</span>`;
+// escapa texto vindo da API antes de montar HTML (evita XSS)
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (c) =>
+  ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const tag = (n) => `<span class="tag ${esc(n)}">${esc(n)}</span>`;
 
 async function carregarTabelas() {
   const [tal, al] = await Promise.all([api("/talhoes-criticos"), api("/alertas?status=ativo&limit=15")]);
   $("t-talhoes").tBodies[0].innerHTML = tal.length ? tal.map(x =>
-    `<tr><td>${x.fazenda}</td><td>${x.talhao}</td><td>${x.cultura}</td><td>${x.umidade}%</td><td>${x.temperatura}°C</td></tr>`).join("")
+    `<tr><td>${esc(x.fazenda)}</td><td>${esc(x.talhao)}</td><td>${esc(x.cultura)}</td><td>${esc(x.umidade)}%</td><td>${esc(x.temperatura)}°C</td></tr>`).join("")
     : `<tr><td colspan="5">Nenhum talhão crítico 🎉</td></tr>`;
   $("t-alertas").tBodies[0].innerHTML = al.length ? al.map(x =>
-    `<tr><td>${tag(x.nivel)}</td><td>${x.fazenda}</td><td>${x.talhao ?? "-"}</td><td>${x.mensagem}</td>
-     <td><button onclick="resolver(${x.id})">Resolver</button></td></tr>`).join("")
+    `<tr><td>${tag(x.nivel)}</td><td>${esc(x.fazenda)}</td><td>${esc(x.talhao ?? "-")}</td><td>${esc(x.mensagem)}</td>
+     <td><button onclick="resolver(${Number(x.id)})">Resolver</button></td></tr>`).join("")
     : `<tr><td colspan="5">Sem alertas ativos</td></tr>`;
 }
 
 async function resolver(id) {
-  await fetch(`/api/alertas/${id}/resolver`, { method: "PATCH" });
+  const r = await fetch(`/api/alertas/${id}/resolver`, { method: "PATCH" });
+  if (!r.ok && r.status !== 404) { alert("Não foi possível resolver o alerta."); return; }
   carregarTudo();
 }
 
 async function carregarSensores() {
   const sel = $("sel-sensor");
-  if (sel.options.length) return;
+  if (sel.value) return;
   const s = await api("/sensores?status=ativo");
-  sel.innerHTML = s.map(x => `<option value="${x.id}">${x.codigo} – ${x.fazenda} / ${x.talhao}</option>`).join("");
+  sel.innerHTML = s.length
+    ? s.map(x => `<option value="${Number(x.id)}">${esc(x.codigo)} – ${esc(x.fazenda)} / ${esc(x.talhao)}</option>`).join("")
+    : '<option value="">Nenhum sensor ativo</option>';
 }
 
 async function carregarHistorico() {

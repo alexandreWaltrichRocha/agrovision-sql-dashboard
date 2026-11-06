@@ -43,4 +43,13 @@ def query(sql, params=None):
 def execute(sql, params=None):
     with get_cursor(commit=True) as cur:
         cur.execute(sql, params)
-        return cur.fetchall() if cur.description else []
+        if cur.description:
+            return cur.fetchall()
+        return []
+
+
+def close_pool():
+    global _pool
+    if _pool is not None:
+        _pool.closeall()
+        _pool = None

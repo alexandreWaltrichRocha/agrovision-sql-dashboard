@@ -64,5 +64,6 @@ CREATE TABLE alertas (
 CREATE INDEX idx_leituras_sensor_data  ON leituras (sensor_id, lida_em DESC);
 CREATE INDEX idx_leituras_fazenda_data ON leituras (fazenda_id, lida_em DESC);
 CREATE INDEX idx_leituras_talhao_data  ON leituras (talhao_id, lida_em DESC);
+CREATE INDEX idx_leituras_lida_em      ON leituras (lida_em);
 CREATE INDEX idx_alertas_status_nivel  ON alertas (status, nivel);
 CREATE INDEX idx_alertas_fazenda       ON alertas (fazenda_id);

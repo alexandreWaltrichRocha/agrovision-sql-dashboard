@@ -61,7 +61,7 @@ uvicorn app.main:app --reload
 | GET | `/api/alertas-por-regiao` | Alertas ativos por região |
 | GET | `/api/top-fazendas-alertas` | Top 10 fazendas com mais alertas |
 | GET | `/api/talhoes-criticos` | Talhões com umidade < 25% ou temp. > 32°C (24h) |
-| GET | `/api/alertas?status=&nivel=` | Lista de alertas |
+| GET | `/api/alertas?status=&nivel=&limit=50&offset=0` | Lista paginada de alertas (`status=` vazio = todos) |
 | PATCH | `/api/alertas/{id}/resolver` | Resolve um alerta |
 | GET | `/api/sensores?status=` | Lista de sensores |
 | GET | `/api/sensores/{id}/historico?horas=48` | Histórico de leituras |

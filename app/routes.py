@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Literal, Optional
 from fastapi import APIRouter, HTTPException, Query
 from app.database import query, execute
 from app.models import LeituraCreate
@@ -73,8 +73,11 @@ def talhoes_criticos():
 
 
 @router.get("/alertas")
-def listar_alertas(status: Optional[str] = "ativo", nivel: Optional[str] = None,
-                   limit: int = Query(50, le=500)):
+def listar_alertas(status: Optional[Literal["ativo", "resolvido", ""]] = "ativo",
+                   nivel: Optional[Literal["baixo", "medio", "critico", ""]] = None,
+                   limit: int = Query(50, ge=1, le=500), offset: int = Query(0, ge=0)):
+    # string vazia (?status=) significa "sem filtro", como documentado no README
+    status, nivel = status or None, nivel or None
     return query("""
         SELECT a.id, f.nome AS fazenda, t.nome AS talhao, a.tipo, a.nivel, a.status,
                a.mensagem, a.criado_em
@@ -84,20 +87,21 @@ def listar_alertas(status: Optional[str] = "ativo", nivel: Optional[str] = None,
         WHERE (%(status)s::text IS NULL OR a.status = %(status)s)
           AND (%(nivel)s::text  IS NULL OR a.nivel  = %(nivel)s)
         ORDER BY CASE a.nivel WHEN 'critico' THEN 1 WHEN 'medio' THEN 2 ELSE 3 END, a.criado_em DESC
-        LIMIT %(limit)s""", {"status": status, "nivel": nivel, "limit": limit})
+        LIMIT %(limit)s OFFSET %(offset)s""",
+        {"status": status, "nivel": nivel, "limit": limit, "offset": offset})
 
 
 @router.patch("/alertas/{alerta_id}/resolver")
 def resolver_alerta(alerta_id: int):
     r = execute("""UPDATE alertas SET status='resolvido', resolvido_em=NOW()
-                   WHERE id=%s AND status='ativo' RETURNING id, status""", (alerta_id,))
+                   WHERE id=%s AND status='ativo' RETURNING id, status, resolvido_em""", (alerta_id,))
     if not r:
         raise HTTPException(404, "Alerta não encontrado ou já resolvido")
     return r[0]
 
 
 @router.get("/sensores")
-def listar_sensores(status: Optional[str] = None):
+def listar_sensores(status: Optional[Literal["ativo", "inativo", "manutencao"]] = None):
     return query("""
         SELECT s.id, s.codigo, s.status, s.tipo, t.nome AS talhao, f.nome AS fazenda,
                (SELECT MAX(lida_em) FROM leituras l WHERE l.sensor_id = s.id) AS ultima_leitura
