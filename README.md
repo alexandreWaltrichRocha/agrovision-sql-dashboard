@@ -1,7 +1,7 @@
 #🌱 AgroVision SQL Analytics
 
 Sistema de monitoramento de propriedades rurais utilizando PostgreSQL, SQL avançado, FastAPI e Dashboard interativo com Chart.js.
-![Dashboard AgroVision](<docs/dashboard.png.png>)
+![Dashboard AgroVision](<docs/dashboard.png>)
 📋 Sobre o Projeto
 
 O AgroVision SQL Analytics foi desenvolvido para simular um ambiente real de monitoramento agrícola através da coleta, armazenamento e análise de dados provenientes de sensores instalados em propriedades rurais.
